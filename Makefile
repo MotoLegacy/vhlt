@@ -75,17 +75,53 @@ COMMON_INCLUDEFILES = \
 			common/win32fix.h \
 			common/winding.h \
 
-COMMON_DEFINITIONS = \
-			VERSION_LINUX \
-			SYSTEM_POSIX \
-			NDEBUG \
-			STDC_HEADERS \
-			HAVE_FCNTL_H \
-			HAVE_PTHREAD_H \
-			HAVE_SYS_RESOURCE_H \
-			HAVE_SYS_STAT_H \
-			HAVE_SYS_TIME_H \
-			HAVE_UNISTD_H \
+ifeq ($(CXX),x86_64-w64-mingw32-g++)
+	HLCSG_NAME = hlcsg.exe
+	HLBSP_NAME = hlbsp.exe
+	HLRAD_NAME = hlrad.exe
+	HLVIS_NAME = hlvis.exe
+	RIPENT_NAME = ripent.exe
+
+	COMMON_DEFINITIONS = \
+		VERSION_64BIT \
+		NDEBUG \
+		WIN32 \
+		_CONSOLE \
+		SYSTEM_WIN32 \
+		STDC_HEADERS
+else ifeq ($(CXX),i686-w64-mingw32-g++)
+	HLCSG_NAME = hlcsg.exe
+	HLBSP_NAME = hlbsp.exe
+	HLRAD_NAME = hlrad.exe
+	HLVIS_NAME = hlvis.exe
+	RIPENT_NAME = ripent.exe
+
+	COMMON_DEFINITIONS = \
+		VERSION_32BIT \
+		NDEBUG \
+		WIN32 \
+		_CONSOLE \
+		SYSTEM_WIN32 \
+		STDC_HEADERS
+else
+	HLCSG_NAME = hlcsg
+	HLBSP_NAME = hlbsp
+	HLRAD_NAME = hlrad
+	HLVIS_NAME = hlvis
+	RIPENT_NAME = ripent
+
+	COMMON_DEFINITIONS = \
+		VERSION_LINUX \
+		SYSTEM_POSIX \
+		NDEBUG \
+		STDC_HEADERS \
+		HAVE_FCNTL_H \
+		HAVE_PTHREAD_H \
+		HAVE_SYS_RESOURCE_H \
+		HAVE_SYS_STAT_H \
+		HAVE_SYS_TIME_H \
+		HAVE_UNISTD_H
+endif
 
 COMMON_FLAGS = -Wall -Wno-deprecated-declarations -O2 -fno-strict-aliasing -pthread -pipe $(USER_FLAGS)
 
@@ -246,7 +282,7 @@ bin/hlcsg : $(HLCSG_CPPFILES:%.cpp=hlcsg/release/%.o) printusage
 	mkdir -p hlcsg/release/bin
 	$(CXX) $(COMMON_FLAGS) -o hlcsg/release/bin/hlcsg $(addprefix -I,$(HLCSG_INCLUDEDIRS)) $(addprefix -D,$(HLCSG_DEFINITIONS)) $(HLCSG_CPPFILES:%.cpp=hlcsg/release/%.o)
 	mkdir -p bin
-	cp hlcsg/release/bin/hlcsg bin/hlcsg
+	cp hlcsg/release/bin/$(HLCSG_NAME) bin/$(HLCSG_NAME)
 
 $(HLCSG_CPPFILES:%.cpp=hlcsg/release/%.o) : hlcsg/release/%.o : %.cpp $(HLCSG_INCLUDEFILES) printusage
 	@echo ======== hlcsg : compiling $< ========
@@ -258,7 +294,7 @@ bin/hlbsp : $(HLBSP_CPPFILES:%.cpp=hlbsp/release/%.o) printusage
 	mkdir -p hlbsp/release/bin
 	$(CXX) $(COMMON_FLAGS) -o hlbsp/release/bin/hlbsp $(addprefix -I,$(HLBSP_INCLUDEDIRS)) $(addprefix -D,$(HLBSP_DEFINITIONS)) $(HLBSP_CPPFILES:%.cpp=hlbsp/release/%.o)
 	mkdir -p bin
-	cp hlbsp/release/bin/hlbsp bin/hlbsp
+	cp hlbsp/release/bin/$(HLBSP_NAME) bin/$(HLBSP_NAME)
 
 $(HLBSP_CPPFILES:%.cpp=hlbsp/release/%.o) : hlbsp/release/%.o : %.cpp $(HLBSP_INCLUDEFILES) printusage
 	@echo ======== hlbsp : compiling $< ========
@@ -270,7 +306,7 @@ bin/hlvis : $(HLVIS_CPPFILES:%.cpp=hlvis/release/%.o) printusage
 	mkdir -p hlvis/release/bin
 	$(CXX) $(COMMON_FLAGS) -o hlvis/release/bin/hlvis $(addprefix -I,$(HLVIS_INCLUDEDIRS)) $(addprefix -D,$(HLVIS_DEFINITIONS)) $(HLVIS_CPPFILES:%.cpp=hlvis/release/%.o)
 	mkdir -p bin
-	cp hlvis/release/bin/hlvis bin/hlvis
+	cp hlvis/release/bin/$(HLVIS_NAME) bin/$(HLVIS_NAME)
 
 $(HLVIS_CPPFILES:%.cpp=hlvis/release/%.o) : hlvis/release/%.o : %.cpp $(HLVIS_INCLUDEFILES) printusage
 	@echo ======== hlvis : compiling $< ========
@@ -282,7 +318,7 @@ bin/hlrad : $(HLRAD_CPPFILES:%.cpp=hlrad/release/%.o) printusage
 	mkdir -p hlrad/release/bin
 	$(CXX) $(COMMON_FLAGS) -o hlrad/release/bin/hlrad $(addprefix -I,$(HLRAD_INCLUDEDIRS)) $(addprefix -D,$(HLRAD_DEFINITIONS)) $(HLRAD_CPPFILES:%.cpp=hlrad/release/%.o)
 	mkdir -p bin
-	cp hlrad/release/bin/hlrad bin/hlrad
+	cp hlrad/release/bin/$(HLRAD_NAME) bin/$(HLRAD_NAME)
 
 $(HLRAD_CPPFILES:%.cpp=hlrad/release/%.o) : hlrad/release/%.o : %.cpp $(HLRAD_INCLUDEFILES) printusage
 	@echo ======== hlrad : compiling $< ========
@@ -294,7 +330,7 @@ bin/ripent : $(RIPENT_CPPFILES:%.cpp=ripent/release/%.o) printusage
 	mkdir -p ripent/release/bin
 	$(CXX) $(COMMON_FLAGS) -o ripent/release/bin/ripent $(addprefix -I,$(RIPENT_INCLUDEDIRS)) $(addprefix -D,$(RIPENT_DEFINITIONS)) $(RIPENT_CPPFILES:%.cpp=ripent/release/%.o)
 	mkdir -p bin
-	cp ripent/release/bin/ripent bin/ripent
+	cp ripent/release/bin/$(RIPENT_NAME) bin/$(RIPENT_NAME)
 
 $(RIPENT_CPPFILES:%.cpp=ripent/release/%.o) : ripent/release/%.o : %.cpp $(RIPENT_INCLUDEFILES) printusage
 	@echo ======== ripent : compiling $< ========

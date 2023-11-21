@@ -3,40 +3,71 @@ name: build
 on: [push, pull_request]
 
 jobs:
-  linux_builds:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest]
-        cxx: [g++, clang++]
+  linux_build:
+    runs-on: ubuntu-latest
     env:
-      CXX: ${{ matrix.cxx }}
+      CXX: g++
+    steps:
+    - name: Install 32-bit libraries
+      run: |
+        sudo apt update && sudo apt install -y g++-multilib
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Build 64 bit
+      run: |
+        make -j8
+    - name: Archive vhlt Linux64 tools
+      uses: actions/upload-artifact@v3
+      with:
+        name: vhlt-linux64-tools
+        path: ./bin/*
+    - name: Build 32 bit
+      run: |
+        make clean
+        make -j8 USER_FLAGS="-m32"
+    - name: Archive vhlt Linux32 tools
+      uses: actions/upload-artifact@v3
+      with:
+        name: vhlt-linux32-tools
+        path: ./bin/*
+
+  macos_build:
+    runs-on: macos-latest
+    env:
+      CXX: clang++
     steps:
     - name: Checkout
       uses: actions/checkout@v3
     - name: Build
       run: |
-        make
-
-  windows_build:
-    runs-on: windows-latest
-
-    env:
-      SOLUTION_FILE_PATH: .
-      BUILD_CONFIGURATION: Release
-
-    steps:
-    - uses: actions/checkout@v3
-
-    - name: Add MSBuild to PATH
-      uses: microsoft/setup-msbuild@v1.1
-
-    - name: Build vhlt Windows tools
-      working-directory: ${{env.GITHUB_WORKSPACE}}
-      run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}}
-
-    - name: Archive vhlt Windows tools
+        make -j8
+    - name: Archive vhlt macOS tools
       uses: actions/upload-artifact@v3
       with:
-        name: vhlt-windows-tools
-        path: D:\a\vhlt\bin\*
+        name: vhlt-macos-tools
+        path: ./bin/*
+
+  windows_build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Install mingw64
+      run: |
+        sudo apt update && sudo apt install -y build-essential g++-multilib mingw-w64
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Build 32 bit
+      run: |
+        make -j8 CXX="i686-w64-mingw32-g++" USER_FLAGS="-w -static"
+    - name: Archive vhlt Windows32 tools
+      uses: actions/upload-artifact@v3
+      with:
+        name: vhlt-windows32-tools
+        path: ./bin/*
+    - name: Build 64 bit
+      run: |
+        make clean && make -j8 CXX="x86_64-w64-mingw32-g++" USER_FLAGS="-w -static"
+    - name: Archive vhlt Windows64 tools
+      uses: actions/upload-artifact@v3
+      with:
+        name: vhlt-windows64-tools
+        path: ./bin/*

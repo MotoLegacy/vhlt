@@ -27,6 +27,9 @@
 #endif
 #endif
 
+// --cypress
+#include <cstdint>
+
 #include "hlassert.h"
 
 q_threadpriority g_threadpriority = DEFAULT_THREAD_PRIORITY;
@@ -349,7 +352,7 @@ q_threadfunction q_entry;
 
 static DWORD WINAPI ThreadEntryStub(LPVOID pParam)
 {
-    q_entry((int)pParam);
+    q_entry((intptr_t)pParam);
     return 0;
 }
 

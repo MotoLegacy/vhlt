@@ -10,7 +10,7 @@ Custom Zoner's Half-Life Tools created by vluzacn. This is not my project, I jus
 
 If you want to pass additional flags to make:
 
-    make USER_FLAGS="your flags"
+    make USER_FLAGS="your-flags"
 
 Example:
 
