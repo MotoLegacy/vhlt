@@ -93,6 +93,7 @@
 #define ZHLT_EMBEDLIGHTMAP // this feature requires HLRAD_TEXTURE and RIPENT_TEXTURE //--vluzacn
 	#endif
 //#define ZHLT_HIDDENSOUNDTEXTURE //--vluzacn
+#define ZHLT_TRENCHBROOMNULL_FIX //--cypress
 
 #define COMMON_HULLU // winding optimisations by hullu
 

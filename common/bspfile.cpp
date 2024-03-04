@@ -1996,6 +1996,13 @@ char*           GetTextureByNumber(int texturenumber)
     ofs = ((dmiptexlump_t*)g_dtexdata)->dataofs[info->miptex];
     miptex = (miptex_t*)(&g_dtexdata[ofs]);
 
+	// cypress -- hacked-in support for __TB_empty
+	// just sorta replacing __TB_empty with null here, because
+	// ericw-tools does the same thing, and this is the best
+	// place to do it with the least amount of work required.
+	if (!strncasecmp(miptex->name, "__TB_empty", 10))
+		return "null";
+
     return miptex->name;
 }
 
